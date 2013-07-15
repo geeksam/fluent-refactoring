@@ -24,9 +24,6 @@ class ScheduleInstallation
             render :json => {:errors => nil, :html => schedule_response(@installation, date)}
           end
         end
-        if request.xhr? && !success
-          render :json => {:errors => [%Q{Could not update installation. #{@installation.errors.full_messages.join(' ')}}] }
-        end
         if !request.xhr? && success
           if @installation.scheduled_date
             if @installation.customer_provided_equipment?
@@ -36,6 +33,9 @@ class ScheduleInstallation
             end
           end
           redirect_to(@installation.customer_provided_equipment? ? customer_provided_installations_path : installations_path(:city_id => @installation.city_id, :view => "calendar"))
+        end
+        if request.xhr? && !success
+          render :json => {:errors => [%Q{Could not update installation. #{@installation.errors.full_messages.join(' ')}}] }
         end
         if !request.xhr? && !success
           flash[:error] = %Q{Could not schedule installation, check the phase of the moon}
