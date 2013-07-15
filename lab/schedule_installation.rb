@@ -19,7 +19,8 @@ class ScheduleInstallation
     else
       if @installation.pending_credit_check?
         flash[:error] = "Cannot schedule installation while credit check is pending"
-        redirect_to installations_path(:city_id => @installation.city_id, :view => "calendar") and return
+        redirect_to installations_path(:city_id => @installation.city_id, :view => "calendar")
+        return
       end
     end
 
