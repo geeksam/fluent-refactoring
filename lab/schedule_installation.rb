@@ -1,12 +1,12 @@
 class ScheduleInstallation
   def initialize(controller, installation, city)
-    @controller = controller
+    @responder = Responder.new(controller, installation)
     @installation = installation
     @city = city
   end
 
   def method_missing(m, *a, &b)
-    @controller.send(m, *a, &b)
+    @responder.send(m, *a, &b)
   end
 
   def call
