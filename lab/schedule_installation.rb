@@ -35,12 +35,7 @@ class ScheduleInstallation
             redirect_to(@installation.customer_provided_equipment? ? customer_provided_installations_path : installations_path(:city_id => @installation.city_id, :view => "calendar"))
           end
         else
-          if request.xhr?
-            render :json => {:errors => [%Q{Could not update installation. #{@installation.errors.full_messages.join(' ')}}] }
-          else
-            flash[:error] = %Q{Could not schedule installation, check the phase of the moon}
-            redirect_to(@installation.customer_provided_equipment? ? customer_provided_installations_path : installations_path(:city_id => @installation.city_id, :view => "calendar"))
-          end
+          scheduling_failed
         end
       end
     rescue Exception => e
@@ -74,6 +69,15 @@ class ScheduleInstallation
       end
     else
       flash[:error] = e.message
+      redirect_to(@installation.customer_provided_equipment? ? customer_provided_installations_path : installations_path(:city_id => @installation.city_id, :view => "calendar"))
+    end
+  end
+
+  def scheduling_failed
+    if request.xhr?
+      render :json => {:errors => [%Q{Could not update installation. #{@installation.errors.full_messages.join(' ')}}] }
+    else
+      flash[:error] = %Q{Could not schedule installation, check the phase of the moon}
       redirect_to(@installation.customer_provided_equipment? ? customer_provided_installations_path : installations_path(:city_id => @installation.city_id, :view => "calendar"))
     end
   end
