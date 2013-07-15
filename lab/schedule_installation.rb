@@ -13,18 +13,16 @@ class ScheduleInstallation
       return
     end
 
-    begin
-      if schedule!
-        if @installation.scheduled_date
-          @responder.scheduling_succeeded
-        end
-        @responder.do_post_success_cleanup
-      else
-        @responder.scheduling_failed
+    if schedule!
+      if @installation.scheduled_date
+        @responder.scheduling_succeeded
       end
-    rescue Exception => e
-      @responder.handle_exception e
+      @responder.do_post_success_cleanup
+    else
+      @responder.scheduling_failed
     end
+  rescue Exception => e
+    @responder.handle_exception e
   end
 
   private
