@@ -1,6 +1,7 @@
 class ScheduleInstallation
   def initialize(controller, installation, city)
-    @responder = Responder.new(controller, installation)
+    responder_class = controller.request.xhr? ? AJAXResponder : HTMLResponder
+    @responder = responder_class.new(controller, installation)
     @installation = installation
     @city = city
   end
