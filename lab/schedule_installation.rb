@@ -14,12 +14,11 @@ class ScheduleInstallation
     if @installation.pending_credit_check?
       if request.xhr?
         render :json => {:errors => ["Cannot schedule installation while credit check is pending"]}, :status => 400
-        return
       else
         flash[:error] = "Cannot schedule installation while credit check is pending"
         redirect_to installations_path(:city_id => @installation.city_id, :view => "calendar")
-        return
       end
+      return
     end
 
     if request.xhr?
