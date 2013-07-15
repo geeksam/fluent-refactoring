@@ -22,11 +22,7 @@ class ScheduleInstallation
           if @installation.scheduled_date
             scheduling_succeeded
           end
-          if request.xhr?
-            # do nothing
-          else
-            redirect_to(@installation.customer_provided_equipment? ? customer_provided_installations_path : installations_path(:city_id => @installation.city_id, :view => "calendar"))
-          end
+          do_post_success_cleanup
         else
           scheduling_failed
         end
@@ -85,6 +81,14 @@ class ScheduleInstallation
       else
         flash[:success] = %Q{Installation scheduled! Don't forget to order the equipment also.}
       end
+    end
+  end
+
+  def do_post_success_cleanup
+    if request.xhr?
+      # do nothing
+    else
+      redirect_to(@installation.customer_provided_equipment? ? customer_provided_installations_path : installations_path(:city_id => @installation.city_id, :view => "calendar"))
     end
   end
 end
