@@ -1,7 +1,6 @@
 class ScheduleInstallation
-  def initialize(controller, installation, city, desired_date, installation_type)
-    responder_class = controller.request.xhr? ? AJAXResponder : HTMLResponder
-    @responder = responder_class.new(controller, installation)
+  def initialize(responder, installation, city, desired_date, installation_type)
+    @responder = responder
     @installation = installation
     @city = city
     @desired_date = desired_date
