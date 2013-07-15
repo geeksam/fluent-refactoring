@@ -35,22 +35,18 @@ class ScheduleInstallation
           render :json => {:errors => ["Could not schedule installation. Start by making sure the desired date is on a business day."]}
         end
       else
-        begin
-          audit_trail_for(current_user) do
-            if @installation.schedule!(desired_date, :installation_type => params[:installation_type], :city => @city)
-              if @installation.scheduled_date
-                if @installation.customer_provided_equipment?
-                  flash[:success] = %Q{Installation scheduled}
-                else
-                  flash[:success] = %Q{Installation scheduled! Don't forget to order the equipment also.}
-                end
+        audit_trail_for(current_user) do
+          if @installation.schedule!(desired_date, :installation_type => params[:installation_type], :city => @city)
+            if @installation.scheduled_date
+              if @installation.customer_provided_equipment?
+                flash[:success] = %Q{Installation scheduled}
+              else
+                flash[:success] = %Q{Installation scheduled! Don't forget to order the equipment also.}
               end
-            else
-              flash[:error] = %Q{Could not schedule installation, check the phase of the moon}
             end
+          else
+            flash[:error] = %Q{Could not schedule installation, check the phase of the moon}
           end
-        rescue => e
-          flash[:error] = e.message
         end
         redirect_to(@installation.customer_provided_equipment? ? customer_provided_installations_path : installations_path(:city_id => @installation.city_id, :view => "calendar"))
       end
@@ -58,7 +54,8 @@ class ScheduleInstallation
       if request.xhr?
         raise e
       else
-        raise e
+        flash[:error] = e.message
+        redirect_to(@installation.customer_provided_equipment? ? customer_provided_installations_path : installations_path(:city_id => @installation.city_id, :view => "calendar"))
       end
     end
   end
