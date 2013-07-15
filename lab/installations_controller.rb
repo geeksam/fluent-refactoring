@@ -5,7 +5,9 @@ class InstallationsController < ActionController::Base
 
   def schedule
     audit_trail_for(current_user) do
-      ScheduleInstallation.new(self, @installation, @city).call
+      desired_date = params[:desired_date]
+      installation_type = params[:installation_type]
+      ScheduleInstallation.new(self, @installation, @city, desired_date, installation_type).call
     end
   end
 

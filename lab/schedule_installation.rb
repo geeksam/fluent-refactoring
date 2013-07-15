@@ -1,10 +1,11 @@
 class ScheduleInstallation
-  def initialize(controller, installation, city)
-    @controller = controller
+  def initialize(controller, installation, city, desired_date, installation_type)
     responder_class = controller.request.xhr? ? AJAXResponder : HTMLResponder
     @responder = responder_class.new(controller, installation)
     @installation = installation
     @city = city
+    @desired_date = desired_date
+    @installation_type = installation_type
   end
 
   def call
@@ -30,6 +31,6 @@ class ScheduleInstallation
   private
 
   def schedule!
-    @installation.schedule!(@controller.params[:desired_date], :installation_type => @controller.params[:installation_type], :city => @city)
+    @installation.schedule!(@desired_date, :installation_type => @installation_type, :city => @city)
   end
 end
