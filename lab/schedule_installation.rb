@@ -17,8 +17,7 @@ class ScheduleInstallation
 
     begin
       audit_trail_for(current_user) do
-        success = schedule!
-        if success
+        if schedule!
           if @installation.scheduled_date
             scheduling_succeeded
           end
