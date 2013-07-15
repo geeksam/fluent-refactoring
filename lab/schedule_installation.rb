@@ -45,18 +45,7 @@ class ScheduleInstallation
         redirect_to(@installation.customer_provided_equipment? ? customer_provided_installations_path : installations_path(:city_id => @installation.city_id, :view => "calendar"))
       end
     rescue Exception => e
-      if request.xhr?
-        begin
-          raise e
-        rescue ActiveRecord::RecordInvalid => e
-          render :json => {:errors => [e.message] }
-        rescue ArgumentError => e
-          render :json => {:errors => ["Could not schedule installation. Start by making sure the desired date is on a business day."]}
-        end
-      else
-        flash[:error] = e.message
-        redirect_to(@installation.customer_provided_equipment? ? customer_provided_installations_path : installations_path(:city_id => @installation.city_id, :view => "calendar"))
-      end
+      handle_exception e
     end
   end
 
@@ -68,6 +57,21 @@ class ScheduleInstallation
     else
       flash[:error] = "Cannot schedule installation while credit check is pending"
       redirect_to installations_path(:city_id => @installation.city_id, :view => "calendar")
+    end
+  end
+
+  def handle_exception(e)
+    if request.xhr?
+      begin
+        raise e
+      rescue ActiveRecord::RecordInvalid => e
+        render :json => {:errors => [e.message] }
+      rescue ArgumentError => e
+        render :json => {:errors => ["Could not schedule installation. Start by making sure the desired date is on a business day."]}
+      end
+    else
+      flash[:error] = e.message
+      redirect_to(@installation.customer_provided_equipment? ? customer_provided_installations_path : installations_path(:city_id => @installation.city_id, :view => "calendar"))
     end
   end
 end
