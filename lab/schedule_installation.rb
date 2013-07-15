@@ -55,7 +55,11 @@ class ScheduleInstallation
         redirect_to(@installation.customer_provided_equipment? ? customer_provided_installations_path : installations_path(:city_id => @installation.city_id, :view => "calendar"))
       end
     rescue Exception => e
-      raise e
+      if request.xhr?
+        raise e
+      else
+        raise e
+      end
     end
   end
 
