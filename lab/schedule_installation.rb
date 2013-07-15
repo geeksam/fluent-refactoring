@@ -19,13 +19,11 @@ class ScheduleInstallation
       audit_trail_for(current_user) do
         success = schedule!
         if success
-          if request.xhr?
-            if @installation.scheduled_date
+          if @installation.scheduled_date
+            if request.xhr?
               date = @installation.scheduled_date.in_time_zone(@installation.city.timezone).to_date
               render :json => {:errors => nil, :html => schedule_response(@installation, date)}
-            end
-          else
-            if @installation.scheduled_date
+            else
               if @installation.customer_provided_equipment?
                 flash[:success] = %Q{Installation scheduled}
               else
