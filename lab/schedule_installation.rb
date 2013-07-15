@@ -1,13 +1,10 @@
 class ScheduleInstallation
   def initialize(controller, installation, city)
+    @controller = controller
     responder_class = controller.request.xhr? ? AJAXResponder : HTMLResponder
     @responder = responder_class.new(controller, installation)
     @installation = installation
     @city = city
-  end
-
-  def method_missing(m, *a, &b)
-    @responder.send(m, *a, &b)
   end
 
   def call
@@ -17,7 +14,7 @@ class ScheduleInstallation
     end
 
     begin
-      audit_trail_for(current_user) do
+      @controller.audit_trail_for(@controller.current_user) do
         if schedule!
           if @installation.scheduled_date
             @responder.scheduling_succeeded
@@ -35,6 +32,6 @@ class ScheduleInstallation
   private
 
   def schedule!
-    @installation.schedule!(params[:desired_date], :installation_type => params[:installation_type], :city => @city)
+    @installation.schedule!(@controller.params[:desired_date], :installation_type => @controller.params[:installation_type], :city => @city)
   end
 end
