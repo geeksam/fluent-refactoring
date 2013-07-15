@@ -18,21 +18,15 @@ class ScheduleInstallation
 
     begin
       if request.xhr?
-        begin
-          audit_trail_for(current_user) do
-            if @installation.schedule!(desired_date, :installation_type => params[:installation_type], :city => @city)
-              if @installation.scheduled_date
-                date = @installation.scheduled_date.in_time_zone(@installation.city.timezone).to_date
-                render :json => {:errors => nil, :html => schedule_response(@installation, date)}
-              end
-            else
-              render :json => {:errors => [%Q{Could not update installation. #{@installation.errors.full_messages.join(' ')}}] }
+        audit_trail_for(current_user) do
+          if @installation.schedule!(desired_date, :installation_type => params[:installation_type], :city => @city)
+            if @installation.scheduled_date
+              date = @installation.scheduled_date.in_time_zone(@installation.city.timezone).to_date
+              render :json => {:errors => nil, :html => schedule_response(@installation, date)}
             end
+          else
+            render :json => {:errors => [%Q{Could not update installation. #{@installation.errors.full_messages.join(' ')}}] }
           end
-        rescue ActiveRecord::RecordInvalid => e
-          render :json => {:errors => [e.message] }
-        rescue ArgumentError => e
-          render :json => {:errors => ["Could not schedule installation. Start by making sure the desired date is on a business day."]}
         end
       else
         audit_trail_for(current_user) do
@@ -52,7 +46,13 @@ class ScheduleInstallation
       end
     rescue Exception => e
       if request.xhr?
-        raise e
+        begin
+          raise e
+        rescue ActiveRecord::RecordInvalid => e
+          render :json => {:errors => [e.message] }
+        rescue ArgumentError => e
+          render :json => {:errors => ["Could not schedule installation. Start by making sure the desired date is on a business day."]}
+        end
       else
         flash[:error] = e.message
         redirect_to(@installation.customer_provided_equipment? ? customer_provided_installations_path : installations_path(:city_id => @installation.city_id, :view => "calendar"))
