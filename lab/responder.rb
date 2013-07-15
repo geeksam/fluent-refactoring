@@ -3,13 +3,14 @@ class Responder
     @controller = controller
     @installation = installation
   end
-
-  def method_missing(m, *a, &b)
-    @controller.send(m, *a, &b)
-  end
 end
 
 class AJAXResponder < Responder
+  extend Forwardable
+  def_delegators :@controller,
+    :render,
+    :schedule_response
+
   def cant_schedule_while_credit_check_pending
     render :json => {:errors => ["Cannot schedule installation while credit check is pending"]}, :status => 400
   end
@@ -39,6 +40,13 @@ class AJAXResponder < Responder
 end
 
 class HTMLResponder < Responder
+  extend Forwardable
+  def_delegators :@controller,
+    :redirect_to,
+    :flash,
+    :customer_provided_installations_path,
+    :installations_path
+
   def cant_schedule_while_credit_check_pending
     flash[:error] = "Cannot schedule installation while credit check is pending"
     redirect_to installations_path(:city_id => @installation.city_id, :view => "calendar")
