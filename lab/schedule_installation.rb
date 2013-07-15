@@ -10,7 +10,6 @@ class ScheduleInstallation
   end
 
   def call
-    desired_date = params[:desired_date]
     if @installation.pending_credit_check?
       cant_schedule_while_credit_check_pending
       return
@@ -19,7 +18,7 @@ class ScheduleInstallation
     begin
       audit_trail_for(current_user) do
         if request.xhr?
-          if @installation.schedule!(desired_date, :installation_type => params[:installation_type], :city => @city)
+          if @installation.schedule!(params[:desired_date], :installation_type => params[:installation_type], :city => @city)
             if @installation.scheduled_date
               date = @installation.scheduled_date.in_time_zone(@installation.city.timezone).to_date
               render :json => {:errors => nil, :html => schedule_response(@installation, date)}
@@ -28,7 +27,7 @@ class ScheduleInstallation
             render :json => {:errors => [%Q{Could not update installation. #{@installation.errors.full_messages.join(' ')}}] }
           end
         else
-          if @installation.schedule!(desired_date, :installation_type => params[:installation_type], :city => @city)
+          if @installation.schedule!(params[:desired_date], :installation_type => params[:installation_type], :city => @city)
             if @installation.scheduled_date
               if @installation.customer_provided_equipment?
                 flash[:success] = %Q{Installation scheduled}
