@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+puts ''
+
+require './meta_helpers'
+
+# Clean out the target directory
+FileUtils.rm_rf target_dir
+
+# Print status bar
+puts '-' * history_of_interest.length
+
+# Walk through the target's history...
+history_of_interest.each_with_index do |id, i|
+  subdir = build_commit_subdir(target_dir, id, i)
+  show_files_of_interest_as_of(id, subdir)
+  combine_ruby_files_in(subdir)
+  generate_syntax_highlighting_in(subdir)
+
+  print '.'; $stdout.flush
+end
+
+puts ''
