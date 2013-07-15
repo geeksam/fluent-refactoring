@@ -14,15 +14,13 @@ class ScheduleInstallation
     end
 
     begin
-      @controller.audit_trail_for(@controller.current_user) do
-        if schedule!
-          if @installation.scheduled_date
-            @responder.scheduling_succeeded
-          end
-          @responder.do_post_success_cleanup
-        else
-          @responder.scheduling_failed
+      if schedule!
+        if @installation.scheduled_date
+          @responder.scheduling_succeeded
         end
+        @responder.do_post_success_cleanup
+      else
+        @responder.scheduling_failed
       end
     rescue Exception => e
       @responder.handle_exception e
