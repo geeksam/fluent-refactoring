@@ -12,7 +12,7 @@ class ScheduleInstallation
 
   def call
     if @installation.pending_credit_check?
-      cant_schedule_while_credit_check_pending
+      @responder.cant_schedule_while_credit_check_pending
       return
     end
 
@@ -20,15 +20,15 @@ class ScheduleInstallation
       audit_trail_for(current_user) do
         if schedule!
           if @installation.scheduled_date
-            scheduling_succeeded
+            @responder.scheduling_succeeded
           end
-          do_post_success_cleanup
+          @responder.do_post_success_cleanup
         else
-          scheduling_failed
+          @responder.scheduling_failed
         end
       end
     rescue Exception => e
-      handle_exception e
+      @responder.handle_exception e
     end
   end
 
