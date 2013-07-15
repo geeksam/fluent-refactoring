@@ -17,8 +17,8 @@ class ScheduleInstallation
     end
 
     begin
-      if request.xhr?
-        audit_trail_for(current_user) do
+      audit_trail_for(current_user) do
+        if request.xhr?
           if @installation.schedule!(desired_date, :installation_type => params[:installation_type], :city => @city)
             if @installation.scheduled_date
               date = @installation.scheduled_date.in_time_zone(@installation.city.timezone).to_date
@@ -27,9 +27,7 @@ class ScheduleInstallation
           else
             render :json => {:errors => [%Q{Could not update installation. #{@installation.errors.full_messages.join(' ')}}] }
           end
-        end
-      else
-        audit_trail_for(current_user) do
+        else
           if @installation.schedule!(desired_date, :installation_type => params[:installation_type], :city => @city)
             if @installation.scheduled_date
               if @installation.customer_provided_equipment?
@@ -41,8 +39,8 @@ class ScheduleInstallation
           else
             flash[:error] = %Q{Could not schedule installation, check the phase of the moon}
           end
+          redirect_to(@installation.customer_provided_equipment? ? customer_provided_installations_path : installations_path(:city_id => @installation.city_id, :view => "calendar"))
         end
-        redirect_to(@installation.customer_provided_equipment? ? customer_provided_installations_path : installations_path(:city_id => @installation.city_id, :view => "calendar"))
       end
     rescue Exception => e
       handle_exception e
