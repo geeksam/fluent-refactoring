@@ -20,16 +20,7 @@ class ScheduleInstallation
         success = schedule!
         if success
           if @installation.scheduled_date
-            if request.xhr?
-              date = @installation.scheduled_date.in_time_zone(@installation.city.timezone).to_date
-              render :json => {:errors => nil, :html => schedule_response(@installation, date)}
-            else
-              if @installation.customer_provided_equipment?
-                flash[:success] = %Q{Installation scheduled}
-              else
-                flash[:success] = %Q{Installation scheduled! Don't forget to order the equipment also.}
-              end
-            end
+            scheduling_succeeded
           end
           if request.xhr?
             # do nothing
@@ -81,6 +72,19 @@ class ScheduleInstallation
     else
       flash[:error] = %Q{Could not schedule installation, check the phase of the moon}
       redirect_to(@installation.customer_provided_equipment? ? customer_provided_installations_path : installations_path(:city_id => @installation.city_id, :view => "calendar"))
+    end
+  end
+
+  def scheduling_succeeded
+    if request.xhr?
+      date = @installation.scheduled_date.in_time_zone(@installation.city.timezone).to_date
+      render :json => {:errors => nil, :html => schedule_response(@installation, date)}
+    else
+      if @installation.customer_provided_equipment?
+        flash[:success] = %Q{Installation scheduled}
+      else
+        flash[:success] = %Q{Installation scheduled! Don't forget to order the equipment also.}
+      end
     end
   end
 end
