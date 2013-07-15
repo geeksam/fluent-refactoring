@@ -1,4 +1,4 @@
-class AJAXResponder
+class Responder
   def initialize(controller, installation)
     @controller = controller
     @installation = installation
@@ -7,7 +7,9 @@ class AJAXResponder
   def method_missing(m, *a, &b)
     @controller.send(m, *a, &b)
   end
+end
 
+class AJAXResponder < Responder
   def cant_schedule_while_credit_check_pending
     render :json => {:errors => ["Cannot schedule installation while credit check is pending"]}, :status => 400
   end
@@ -36,16 +38,7 @@ class AJAXResponder
   end
 end
 
-class HTMLResponder
-  def initialize(controller, installation)
-    @controller = controller
-    @installation = installation
-  end
-
-  def method_missing(m, *a, &b)
-    @controller.send(m, *a, &b)
-  end
-
+class HTMLResponder < Responder
   def cant_schedule_while_credit_check_pending
     flash[:error] = "Cannot schedule installation while credit check is pending"
     redirect_to installations_path(:city_id => @installation.city_id, :view => "calendar")
