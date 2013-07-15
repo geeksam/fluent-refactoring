@@ -38,11 +38,12 @@ class ScheduleInstallation
                 flash[:success] = %Q{Installation scheduled! Don't forget to order the equipment also.}
               end
             end
+            redirect_to(@installation.customer_provided_equipment? ? customer_provided_installations_path : installations_path(:city_id => @installation.city_id, :view => "calendar"))
           end
           if !success
             flash[:error] = %Q{Could not schedule installation, check the phase of the moon}
+            redirect_to(@installation.customer_provided_equipment? ? customer_provided_installations_path : installations_path(:city_id => @installation.city_id, :view => "calendar"))
           end
-          redirect_to(@installation.customer_provided_equipment? ? customer_provided_installations_path : installations_path(:city_id => @installation.city_id, :view => "calendar"))
         end
       end
     rescue Exception => e
