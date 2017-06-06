@@ -90,7 +90,7 @@ describe InstallationsController do
         end
 
         it "renders failure JSON" do
-          errors = stub(:full_messages => %w[foo bar])
+          errors = double(:full_messages => %w[foo bar])
           installation.should_receive(:errors).at_least(:once).and_return(errors)
           expect_render( { :json => { :errors => ["Could not update installation. foo bar"] } } )
           invoke!
@@ -292,7 +292,7 @@ describe InstallationsController do
   # Infrastructure
 
   before :each do
-    controller.stub!({
+    controller.stub({
       :params => params,
       :flash => flash,
       :request => request,
@@ -305,11 +305,11 @@ describe InstallationsController do
     :desired_date => 'tuesday',
     :installation_type => 'residential',
   } }
-  let(:flash) { stub('flash') }
-  let(:request) { stub('request') }
+  let(:flash) { double('flash') }
+  let(:request) { double('request') }
 
-  let(:installation) { stub('installation', :city => city, :city_id => 42) }
-  let(:city) { stub('city').as_null_object }
+  let(:installation) { double('installation', :city => city, :city_id => 42) }
+  let(:city) { double('city').as_null_object }
   let(:scheduled_date) { (Date.today + 5) }
 
   # >.<  these are the expected args for the installation#schedule! method
