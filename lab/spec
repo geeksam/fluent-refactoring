@@ -1,1 +1,1 @@
-rspec lab/installations_controller_spec.rb
+rspec lab/installations_controller_spec.rb --color
