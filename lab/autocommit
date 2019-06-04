@@ -1,9 +1,0 @@
-#!/usr/bin/env ruby
-if ARGV.empty?
-  puts "no commit message"
-  exit
-end
-
-lab = File.expand_path(File.dirname(__FILE__))
-cmd = "#{lab}/spec && git commit -am '#{ARGV.join(' ')}'"
-exec cmd
