@@ -1,4 +1,5 @@
 require 'active_support'
+require 'date'
 
 # stub out dependencies
 module ActionController
