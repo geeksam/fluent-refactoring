@@ -1,1 +1,1 @@
-rspec lab/installations_controller_spec.rb
+bundle exec rspec lab/installations_controller_spec.rb
