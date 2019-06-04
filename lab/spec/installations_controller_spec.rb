@@ -10,7 +10,7 @@ module ActiveRecord
   class RecordInvalid < Exception; end
 end
 
-require File.join(File.dirname(__FILE__), 'installations_controller')
+require_relative "../installations_controller"
 
 
 describe InstallationsController do
